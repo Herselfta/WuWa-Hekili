@@ -9,7 +9,6 @@ from PySide6.QtCore import Qt, Signal, QTimer
 from PySide6.QtGui import QPixmap
 
 from tools.generic_parser import GenericScriptParser
-from utils.asset_manager import AssetManager
 from utils.logger import log
 
 
@@ -198,11 +197,7 @@ class RoutineUploaderWindow(QWidget):
             else:
                 self.scroll_list_layout.removeItem(item)
 
-        # 2. 正确初始化资源管理器
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        assets_path = os.path.join(base_dir, "assets", "assets")
-        self.asset_mgr = AssetManager(assets_path)
-
+        # 2. 不再使用资源管理器
         self.opener_widgets = []
         self.loop_widgets = []
 
@@ -227,7 +222,7 @@ class RoutineUploaderWindow(QWidget):
                     char_name = team_dict.get(str(current_char_id), "Unknown")
 
                 # 创建编辑器组件
-                row = ActionEditorRow(i, act, char_name, self.asset_mgr)
+                row = ActionEditorRow(i, act, char_name)
                 self.scroll_list_layout.addWidget(row)
                 widget_list.append(row)
 
@@ -250,28 +245,21 @@ class RoutineUploaderWindow(QWidget):
         name, ok = QInputDialog.getText(self, "保存流程", "起个名字:", QLineEdit.EchoMode.Normal, default)
         if not (ok and name): return
 
-        def update_script_with_choices(original_script, widgets):
+        def update_script_with_choices(original_script):
             new_script = []
             for i, act in enumerate(original_script):
                 final_act = dict(act)
-                selected_file = widgets[i].get_selected_filename()
 
-                if selected_file and selected_file != "None":
-                    # 💡 核心修复：把用户选的精确文件名专门存起来！
-                    final_act["custom_icon"] = selected_file
-
-                    pure_name = selected_file.replace(".png", "")
-                    # 变体只管逻辑，不管图片了
-                    if "heavy" in final_act.get("variant", "").lower() or final_act.get("desc", "").startswith("重击"):
-                        final_act["variant"] = "heavy"
-                    elif "forte" in final_act.get("variant", "").lower() or final_act.get("desc", "").startswith(
-                            "核心"):
-                        final_act["variant"] = "forte"
+                # 变体只管逻辑，不管图片了
+                if "heavy" in final_act.get("variant", "").lower() or final_act.get("desc", "").startswith("重击"):
+                    final_act["variant"] = "heavy"
+                elif "forte" in final_act.get("variant", "").lower() or final_act.get("desc", "").startswith("核心"):
+                    final_act["variant"] = "forte"
                 new_script.append(final_act)
             return new_script
 
-        final_opener = update_script_with_choices(self.parsed_opener, self.opener_widgets)
-        final_loop = update_script_with_choices(self.parsed_loop, self.loop_widgets)
+        final_opener = update_script_with_choices(self.parsed_opener)
+        final_loop = update_script_with_choices(self.parsed_loop)
 
         save_data = {
             "name": name,

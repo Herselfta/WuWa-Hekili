@@ -1,0 +1,394 @@
+{
+    "name": "lfw",
+    "team_config": {
+        "1": "Aemeath",
+        "2": "Cantarella",
+        "3": "Lynae"
+    },
+    "team_aliases": {
+        "1": "今汐",
+        "2": "维里奈",
+        "3": "长离"
+    },
+    "original_opener": "今汐e\n维里奈aerq\n长离e\n维里奈跳a\n今汐eq\n长离ae\n今汐aae\n长离aq\n今汐ae\n长离aaaz\n维里奈e\n长离rz",
+    "original_loop": "今汐eqr\n长离e\n今汐aae\n长离a\n今汐ae\n长离a\n维里奈aeqr跳a\n今汐e\n长离e\n今汐aae\n长离aq\n今汐ae\n长离az\n维里奈e\n长离rz\n今汐eqr",
+    "opener_script": [
+        {
+            "type": "skill",
+            "desc": "技能"
+        },
+        {
+            "type": "intro",
+            "next_char": 2,
+            "desc": "切-Cantarella"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "skill",
+            "desc": "技能"
+        },
+        {
+            "type": "ult",
+            "desc": "解放"
+        },
+        {
+            "type": "echo",
+            "desc": "声骸"
+        },
+        {
+            "type": "intro",
+            "next_char": 3,
+            "desc": "切-Lynae"
+        },
+        {
+            "type": "skill",
+            "desc": "技能"
+        },
+        {
+            "type": "intro",
+            "next_char": 2,
+            "desc": "切-Cantarella"
+        },
+        {
+            "type": "jump",
+            "desc": "跳跃"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "intro",
+            "next_char": 1,
+            "desc": "切-Aemeath"
+        },
+        {
+            "type": "skill",
+            "desc": "技能"
+        },
+        {
+            "type": "echo",
+            "desc": "声骸"
+        },
+        {
+            "type": "intro",
+            "next_char": 3,
+            "desc": "切-Lynae"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "skill",
+            "desc": "技能"
+        },
+        {
+            "type": "intro",
+            "next_char": 1,
+            "desc": "切-Aemeath"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "skill",
+            "desc": "技能"
+        },
+        {
+            "type": "intro",
+            "next_char": 3,
+            "desc": "切-Lynae"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "echo",
+            "desc": "声骸"
+        },
+        {
+            "type": "intro",
+            "next_char": 1,
+            "desc": "切-Aemeath"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "skill",
+            "desc": "技能"
+        },
+        {
+            "type": "intro",
+            "next_char": 3,
+            "desc": "切-Lynae"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "heavy",
+            "desc": "重击",
+            "variant": "heavy"
+        },
+        {
+            "type": "intro",
+            "next_char": 2,
+            "desc": "切-Cantarella"
+        },
+        {
+            "type": "skill",
+            "desc": "技能"
+        },
+        {
+            "type": "intro",
+            "next_char": 3,
+            "desc": "切-Lynae"
+        },
+        {
+            "type": "ult",
+            "desc": "解放"
+        },
+        {
+            "type": "heavy",
+            "desc": "重击",
+            "variant": "heavy"
+        }
+    ],
+    "loop_script": [
+        {
+            "type": "skill",
+            "desc": "技能"
+        },
+        {
+            "type": "echo",
+            "desc": "声骸"
+        },
+        {
+            "type": "ult",
+            "desc": "解放"
+        },
+        {
+            "type": "intro",
+            "next_char": 3,
+            "desc": "切-Lynae"
+        },
+        {
+            "type": "skill",
+            "desc": "技能"
+        },
+        {
+            "type": "intro",
+            "next_char": 1,
+            "desc": "切-Aemeath"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "skill",
+            "desc": "技能"
+        },
+        {
+            "type": "intro",
+            "next_char": 3,
+            "desc": "切-Lynae"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "intro",
+            "next_char": 1,
+            "desc": "切-Aemeath"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "skill",
+            "desc": "技能"
+        },
+        {
+            "type": "intro",
+            "next_char": 3,
+            "desc": "切-Lynae"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "intro",
+            "next_char": 2,
+            "desc": "切-Cantarella"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "skill",
+            "desc": "技能"
+        },
+        {
+            "type": "echo",
+            "desc": "声骸"
+        },
+        {
+            "type": "ult",
+            "desc": "解放"
+        },
+        {
+            "type": "jump",
+            "desc": "跳跃"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "intro",
+            "next_char": 1,
+            "desc": "切-Aemeath"
+        },
+        {
+            "type": "skill",
+            "desc": "技能"
+        },
+        {
+            "type": "intro",
+            "next_char": 3,
+            "desc": "切-Lynae"
+        },
+        {
+            "type": "skill",
+            "desc": "技能"
+        },
+        {
+            "type": "intro",
+            "next_char": 1,
+            "desc": "切-Aemeath"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "skill",
+            "desc": "技能"
+        },
+        {
+            "type": "intro",
+            "next_char": 3,
+            "desc": "切-Lynae"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "echo",
+            "desc": "声骸"
+        },
+        {
+            "type": "intro",
+            "next_char": 1,
+            "desc": "切-Aemeath"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "skill",
+            "desc": "技能"
+        },
+        {
+            "type": "intro",
+            "next_char": 3,
+            "desc": "切-Lynae"
+        },
+        {
+            "type": "basic",
+            "desc": "普攻"
+        },
+        {
+            "type": "heavy",
+            "desc": "重击",
+            "variant": "heavy"
+        },
+        {
+            "type": "intro",
+            "next_char": 2,
+            "desc": "切-Cantarella"
+        },
+        {
+            "type": "skill",
+            "desc": "技能"
+        },
+        {
+            "type": "intro",
+            "next_char": 3,
+            "desc": "切-Lynae"
+        },
+        {
+            "type": "ult",
+            "desc": "解放"
+        },
+        {
+            "type": "heavy",
+            "desc": "重击",
+            "variant": "heavy"
+        },
+        {
+            "type": "intro",
+            "next_char": 1,
+            "desc": "切-Aemeath"
+        },
+        {
+            "type": "skill",
+            "desc": "技能"
+        },
+        {
+            "type": "echo",
+            "desc": "声骸"
+        },
+        {
+            "type": "ult",
+            "desc": "解放"
+        }
+    ],
+    "initial_char_index": 1
+}

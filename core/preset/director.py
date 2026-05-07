@@ -4,15 +4,22 @@ from utils.logger import log
 
 
 class Director:
-    def __init__(self, team_config, opener_script, loop_script, start_char_index, asset_mgr):
+    def __init__(self, team_config, opener_script, loop_script, start_char_index, asset_mgr=None):
         self.team = team_config
         self.opener = opener_script
         self.loop = loop_script
-        self.asset_mgr = asset_mgr
 
         self.is_in_opener = True if self.opener else False
         self.step_index = 0
         self.current_char_idx = start_char_index
+        
+        # 💡 安全检查：如果初始角色不在队伍配置里，尝试自动修正
+        if self.current_char_idx not in self.team and self.team:
+            fallback_idx = list(self.team.keys())[0]
+            log.warning(f"⚠️ 初始角色索引 {self.current_char_idx} 不在队伍配置中，已自动修正为 {fallback_idx} ({self.team[fallback_idx]})")
+            self.current_char_idx = fallback_idx
+        elif not self.team:
+            log.error("❌ 队伍配置为空！请检查 JSON 剧本中的 team_config 字段。")
 
         # 状态机变量
         self.is_holding = False
@@ -41,24 +48,20 @@ class Director:
             # 处理历史记录预览
             if i == -1:
                 if not self.history_stack:
-                    result.append({"icon_path": None, "btn_path": None, "desc": "START", "is_history": True})
+                    result.append({"type": "none", "desc": "START", "is_history": True, "char_name": ""})
                     continue
                 else:
                     # 从栈顶取上一个真实的状态
                     h_idx, h_opener, h_char = self.history_stack[-1]
                     prev_action = (self.opener if h_opener else self.loop)[h_idx]
 
-                    # 确定历史图标应该属于谁
-                    # 如果历史动作是 intro，图标显示的是目标角色
-                    display_name = self.team.get(h_char, "Unknown")
-                    icon_path = self.asset_mgr.get_icon_path(display_name, prev_action["type"],
-                                                             prev_action.get("variant"))
                     result.append({
+                        "type": prev_action["type"],
+                        "next_char": prev_action.get("next_char"),
                         "desc": prev_action.get("desc", ""),
-                        "icon_path": icon_path,
-                        "btn_path": None,
                         "is_current": False,
-                        "is_history": True
+                        "is_history": True,
+                        "char_name": str(h_char)
                     })
                     continue
 
@@ -68,25 +71,18 @@ class Director:
 
             # 💡 关键：预测未来的角色变化
             display_char_idx = virtual_char_idx
-            target_idx_arg = None
             if action["type"] == "intro":
                 next_c = action.get("next_char")
                 if next_c:
                     display_char_idx = next_c
                     if i >= 0: virtual_char_idx = next_c  # 更新后续步骤的预测基准
-                    target_idx_arg = next_c
-
-            char_name = self.team.get(display_char_idx, "Unknown")
-            icon_path = self.asset_mgr.get_icon_path(char_name, action["type"], action.get("variant"),
-                                                     action.get("force_general", False), action.get("custom_icon"))
-            btn_path = self.asset_mgr.get_button_path(action["type"], target_index=target_idx_arg)
 
             result.append({
+                "type": action["type"],
+                "next_char": action.get("next_char"),
                 "desc": action.get("desc", ""),
-                "icon_path": icon_path,
-                "btn_path": btn_path,
                 "variant": action.get("variant"),
-                "char_name": char_name,
+                "char_name": str(display_char_idx),
                 "is_current": (i == 0),
                 "is_history": False
             })
@@ -144,7 +140,12 @@ class Director:
         current_action = current_script[self.step_index]
         if current_action.get("type") == "intro":
             next_char = current_action.get("next_char")
-            if next_char: self.current_char_idx = next_char
+            if next_char:
+                if next_char in self.team:
+                    self.current_char_idx = next_char
+                else:
+                    log.warning(f"⚠️ 剧本尝试切换到角色索引 {next_char}，但该索引未在 team_config 中定义！")
+                    self.current_char_idx = next_char # 仍然赋值，但上面已经警告了
 
         self.step_index += 1
         if self.is_in_opener and self.step_index >= len(self.opener):

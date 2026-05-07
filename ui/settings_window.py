@@ -15,7 +15,6 @@ class SettingsWindow(QWidget):
 
         # 💡 数据结构改变：按设备分类存储下拉框引用
         self.combos = {
-            "xbox": {},
             "keyboard": {}
         }
 
@@ -25,10 +24,7 @@ class SettingsWindow(QWidget):
         self.tabs = QTabWidget()
         layout.addWidget(self.tabs)
 
-        # 2. 🎮 生成 Xbox 设置页
-        tab_xbox = QWidget()
-        self._build_mapping_form(tab_xbox, "xbox")
-        self.tabs.addTab(tab_xbox, "🎮 手柄映射")
+
 
         # 3. ⌨️ 生成 键盘 设置页
         tab_kb = QWidget()
@@ -61,15 +57,13 @@ class SettingsWindow(QWidget):
         form_layout.setSpacing(15)
         form_layout.setContentsMargins(15, 15, 15, 15)
 
-        # 扫描图片名
-        icon_options = self._scan_available_icons(device)
-
-        if not icon_options:
-            form_layout.addRow(
-                QLabel(f"❌ 错误：在 assets/ui/{device} 未找到图标！\n请检查文件夹是否存在及是否有 .png 文件。"))
-            layout = QVBoxLayout(parent_tab)
-            layout.addWidget(scroll)
-            return
+        # 直接提供可用按键列表
+        icon_options = [
+            'keyboard_q', 'keyboard_e', 'keyboard_r', 'keyboard_f',
+            'keyboard_x', 'keyboard_v', 'keyboard_c', 'keyboard_space',
+            'keyboard_1', 'keyboard_2', 'keyboard_3', 'keyboard_4', 'keyboard_5',
+            'mouse_left', 'mouse_right', 'mouse_scroll', 'mouse_side1', 'mouse_side2'
+        ]
 
         # 读取当前配置
         current_map = config.get(f"keymaps.{device}", {})
@@ -94,11 +88,12 @@ class SettingsWindow(QWidget):
         for label_text, key in actions:
             combo = QComboBox()
             combo.setMinimumHeight(28)
+            combo.setEditable(True) # 允许用户手输未在列表里的按键
             combo.addItems(icon_options)
 
             # 选中已保存的值
             current_val = current_map.get(key, "")
-            if current_val in icon_options:
+            if current_val:
                 combo.setCurrentText(current_val)
 
             # 存入对应设备的字典中
@@ -110,32 +105,11 @@ class SettingsWindow(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(scroll)
 
-    def _scan_available_icons(self, device):
-        """去 assets/ui/device 文件夹里找所有的图片"""
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        target_path = os.path.join(base_dir, "assets", "ui", device)
-
-        if not os.path.exists(target_path):
-            return []
-
-        files = []
-        for f in os.listdir(target_path):
-            if f.lower().endswith(".png"):
-                files.append(f[:-4])
-
-        files.sort()
-        return files
-
     def save_config(self):
-        """遍历两个设备的下拉框，全部保存到 JSON"""
-        # 保存 Xbox 配置
-        for action_key, combo in self.combos["xbox"].items():
-            config.update_setting(f"keymaps.xbox.{action_key}", combo.currentText())
-
-        # 保存 Keyboard 配置
+        """保存配置到 JSON"""
         for action_key, combo in self.combos["keyboard"].items():
             config.update_setting(f"keymaps.keyboard.{action_key}", combo.currentText())
 
-        print("💾 双端按键配置已保存！")
+        print("💾 键盘按键配置已保存！")
         self.config_saved.emit()
         self.close()

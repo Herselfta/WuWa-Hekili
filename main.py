@@ -13,7 +13,6 @@ from ui.routine_uploader import RoutineUploaderWindow
 from ui.routine_selector import RoutineSelector  # 确保导入了选择器
 
 # 导入逻辑核心
-from utils.asset_manager import AssetManager
 from utils.input_listener import InputListener
 from utils.logger import log
 from core.preset.director import Director
@@ -90,17 +89,12 @@ class HekiliApp:
         with open(json_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
 
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        assets_path = os.path.join(base_dir, "assets", "assets")
-        asset_mgr = AssetManager(assets_path)
-
         # 实例化导演
         self.director = Director(
             team_config={int(k): v for k, v in data["team_config"].items()},
             opener_script=data["opener_script"],
             loop_script=data["loop_script"],
-            start_char_index=data["initial_char_index"],
-            asset_mgr=asset_mgr
+            start_char_index=data["initial_char_index"]
         )
 
         self.overlay = HekiliOverlay()
@@ -112,12 +106,6 @@ class HekiliApp:
 
         self.input_thread = InputListener()
         self.input_thread.action_detected.connect(self.on_action_detected)
-
-        def on_device_switched(device_name):
-            # is_advance=False 意味着不播放滑动动画，只是原地更换角落里的按键图标
-            self.refresh_ui(is_advance=False)
-
-        self.input_thread.device_switched.connect(on_device_switched)
 
         self.input_thread.start()
 

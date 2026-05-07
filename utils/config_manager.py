@@ -66,36 +66,11 @@ class ConfigManager:
         """生成完美的默认 config.json"""
         default_config = {
             "settings": {
-                "current_device": "xbox",
                 "theme": "default",
                 "window_opacity": 0.9,
                 "heavy_hold_time": 0.5,
                 "window_x": 100,
                 "window_y": 100
-            },
-            "controller": {
-               "buttons": {
-                   "a" : 0,
-                   "b" : 1,
-                   "x" : 2,
-                   "y" : 3,
-                   "lb": 4,
-                   "rb": 5,
-                   "view": 6,
-                   "menu": 7,
-                   "ls": 8,
-                   "rs": 9
-               },
-                "axes": {
-                    "lt": 4,
-                    "rt": 5
-                },
-                "hat_": {
-                    "dpad_up": "0,1",
-                    "dpad_down": "0,-1",
-                    "dpad_left": "-1,0",
-                    "dpad_right": "1,0"
-                }
             },
             "assets": {
                 "folder_mapping": {
@@ -122,21 +97,6 @@ class ConfigManager:
                 }
             },
             "keymaps": {
-                "xbox": {
-                    "start_trigger": "xbox_lb",
-                    "rollback": "xbox_button_view",
-                    "basic": "xbox_button_b",
-                    "skill": "xbox_button_y",
-                    "ult": "xbox_rb",
-                    "jump": "xbox_button_a",
-                    "dodge": "xbox_rt",
-                    "echo": "xbox_lt",
-                    "execution": "xbox_button_x",
-                    "lock": "xbox_rs",
-                    "intro_1": "xbox_dpad_up",
-                    "intro_2": "xbox_dpad_right",
-                    "intro_3": "xbox_dpad_down"
-                },
                 "keyboard": {
                     "start_trigger": "keyboard_x",
                     "rollback": "keyboard_v",
