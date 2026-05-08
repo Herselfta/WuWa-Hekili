@@ -54,8 +54,26 @@ class ActionWidget(QFrame):
         # 文字标签覆盖全屏居中
         self.text_label.setGeometry(self.rect())
         
+        # 动态调整字体大小 (大约为高度的40%)
+        font_size = max(10, int(h * 0.4))
+        self.text_label.setStyleSheet(f"""
+            color: #00FF00; 
+            font-family: 'Segoe UI', 'Microsoft YaHei';
+            font-weight: bold;
+            font-size: {font_size}px;
+            background: transparent;
+        """)
+        
         # 角色标签放在左上角
-        self.char_label.setGeometry(2, 2, 16, 16)
+        char_size = max(14, int(h * 0.25))
+        self.char_label.setGeometry(2, 2, char_size, char_size)
+        self.char_label.setStyleSheet(f"""
+            background-color: rgba(0, 150, 255, 200); 
+            color: white; 
+            font-weight: bold; 
+            font-size: {max(9, int(char_size * 0.7))}px;
+            border-radius: 4px;
+        """)
         
         # 状态标签（如 HOLD）放在底部
         self.status_label.setGeometry(2, h - int(h * 0.25) - 2, w - 4, int(h * 0.25))
@@ -106,13 +124,6 @@ class ActionWidget(QFrame):
             else: display_text = raw_suffix.upper()
         
         self.text_label.setText(display_text)
-        self.text_label.setStyleSheet("""
-            color: #00FF00; 
-            font-family: 'Segoe UI', 'Microsoft YaHei';
-            font-weight: bold;
-            font-size: 32px;
-            background: transparent;
-        """)
 
         # 角色标识显示
         char_name = data.get("char_name", "")

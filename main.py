@@ -119,18 +119,19 @@ class HekiliApp:
                 self.refresh_ui(is_advance=False)
             return
 
-        # 如果脚本还没启动，我们只等发令枪
-        if not self.is_active:
-            if is_down and action_name == "start_trigger":
-                self.is_active = True
-                log.info("🚀 [System] 脚本正式激活！")
+        # 启动/重置键逻辑：无论何时按下，都会将脚本进度清零并重新激活
+        if is_down and action_name == "start_trigger":
+            self.is_active = True
+            log.info("🚀 [System] 脚本已(重新)激活/重置！")
+            self.director.reset()
+            self.refresh_ui(is_advance=False)
+            if len(self.overlay.widgets) > 1:
+                self.overlay.widgets[1].setStyleSheet(
+                    "ActionWidget { border: 4px solid #00FF00; background-color: rgba(0, 0, 0, 180); border-radius: 8px; }")
+            return
 
-                self.director.reset()
-                self.refresh_ui(is_advance=False)
-                if len(self.overlay.widgets) > 1:
-                    self.overlay.widgets[1].setStyleSheet(
-                        "ActionWidget { border: 4px solid #00FF00; background-color: rgba(0, 0, 0, 180); border-radius: 8px; }")
-            # 未激活时，所有其他按键全被这里的 return 拦截丢弃
+        # 如果脚本还没启动，忽略其他普通的战斗按键
+        if not self.is_active:
             return
 
         # 能走到这里的，一定是“已经激活了”，并且“不是回退键”的动作

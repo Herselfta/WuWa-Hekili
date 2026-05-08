@@ -18,7 +18,8 @@ class HekiliOverlay(QMainWindow):
 
         old_x = config.get("settings.window_x", 100)
         old_y = config.get("settings.window_y", 100)
-        self.setGeometry(old_x, old_y, 400, 150)
+        # 将窗口大小调整为 440x120，完美包裹 4 个可见槽位
+        self.setGeometry(old_x, old_y, 400, 120)
         self._drag_pos = QPoint()
 
         self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
@@ -32,23 +33,24 @@ class HekiliOverlay(QMainWindow):
         self.anim_group = None
         self.exiting_widget = None
 
-        # [位置-1] 历史动作 (最左侧，黑白/变小)
-        self.POS_HIS = QRect(-20, 36, 48, 48)  # 放在最左边偏下的位置
-        self.OP_HIS = 0.4  # 很暗
-        # [位置0] 准备飞出的位置
-        self.POS_OUT = QRect(10, 20, 80, 80)
-        self.OP_OUT = 0.0
-        # [位置1] 当前技能 (最大)
-        self.POS_CUR = QRect(40, 20, 80, 80)  # 整体往右移一点，给历史留位置
+        # [位置-1] 历史动作 (左侧)
+        self.POS_HIS = QRect(46, 36, 48, 48)   # X=46
+        self.OP_HIS = 0.4
+        
+        # [位置1] 当前技能 (整体序列的视觉重心之一)
+        self.POS_CUR = QRect(126, 20, 80, 80)  # X=126
         self.OP_CUR = 1.0
+        
         # [位置2] 下一个技能
-        self.POS_NXT = QRect(140, 28, 64, 64)
+        self.POS_NXT = QRect(226, 28, 64, 64)  # X=226
         self.OP_NXT = 0.8
-        # [位置3] 未来技能
-        self.POS_FUT = QRect(220, 36, 48, 48)
+        
+        # [位置3] 未来技能 (最右侧可见)
+        self.POS_FUT = QRect(306, 36, 48, 48)  # X=306
         self.OP_FUT = 0.6
-        # [位置4] 备用进场位置
-        self.POS_IN = QRect(290, 44, 32, 32)
+        
+        # [位置4] 备用进场位置 (右侧边缘外)
+        self.POS_IN = QRect(376, 44, 32, 32)   # X=376
         self.OP_IN = 0.0
 
     def update_ui(self, visual_data, is_advance=False, is_rollback=False):
@@ -126,7 +128,7 @@ class HekiliOverlay(QMainWindow):
                 self.anim_group.addAnimation(anim_op)
 
             # 分配动画目标
-            add_anim(w_his, QRect(-50, 36, 32, 32), 0.0)  # 历史飞走
+            add_anim(w_his, QRect(-30, 44, 32, 32), 0.0)  # 历史往左侧边缘消失
             add_anim(w_out, self.POS_HIS, self.OP_HIS)  # 当前变历史
             add_anim(w_cur, self.POS_CUR, self.OP_CUR)  # 前进
             add_anim(w_nxt, self.POS_NXT, self.OP_NXT)  # 前进
