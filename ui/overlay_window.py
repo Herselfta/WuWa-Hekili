@@ -48,24 +48,24 @@ class HekiliOverlay(QMainWindow):
         self.exiting_widget = None
 
         # [位置-1] 历史动作 (左侧)
-        # 扩展容器大小以允许标识“出界”对齐
-        self.POS_HIS = QRect(36, 26, 68, 68)   # 原 46, 36, 48, 48
+        # 进一步扩宽容器（单边 20px 边距），防止放大时标识被裁剪
+        self.POS_HIS = QRect(26, 16, 88, 88)   # 原 46, 36, 48, 48
         self.OP_HIS = 0.4
         
         # [位置1] 当前技能 (核心)
-        self.POS_CUR = QRect(116, 10, 100, 100) # 原 126, 20, 80, 80
+        self.POS_CUR = QRect(106, 0, 120, 120)  # 原 126, 20, 80, 80
         self.OP_CUR = 1.0
         
         # [位置2] 下一个技能
-        self.POS_NXT = QRect(216, 18, 84, 84)  # 原 226, 28, 64, 64
+        self.POS_NXT = QRect(206, 8, 104, 104) # 原 226, 28, 64, 64
         self.OP_NXT = 0.8
         
         # [位置3] 未来技能
-        self.POS_FUT = QRect(296, 26, 68, 68)  # 原 306, 36, 48, 48
+        self.POS_FUT = QRect(286, 16, 88, 88)  # 原 306, 36, 48, 48
         self.OP_FUT = 0.6
         
         # [位置4] 进场位置 (右侧边缘外)
-        self.POS_IN = QRect(366, 34, 52, 52)   # 原 376, 44, 32, 32
+        self.POS_IN = QRect(356, 24, 72, 72)   # 原 376, 44, 32, 32
         self.OP_IN = 0.0
 
     def update_ui(self, visual_data, is_advance=False, is_rollback=False):
@@ -122,6 +122,8 @@ class HekiliOverlay(QMainWindow):
 
             w_out.update_style(visual_data[0].get("variant"), False)
             w_cur.update_style(visual_data[1].get("variant"), True)
+            w_nxt.update_style(visual_data[2].get("variant"), False)
+            w_fut.update_style(visual_data[3].get("variant"), False)
 
             self.anim_group = QParallelAnimationGroup(self)
             easing = QEasingCurve.Type.OutExpo
@@ -143,7 +145,7 @@ class HekiliOverlay(QMainWindow):
                 self.anim_group.addAnimation(anim_op)
 
             # 分配动画目标
-            add_anim(w_his, QRect(-40, 34, 52, 52), 0.0)  # 历史往左侧边缘消失
+            add_anim(w_his, QRect(-50, 24, 72, 72), 0.0)  # 历史往左侧边缘消失
             add_anim(w_out, self.POS_HIS, self.OP_HIS)  # 当前变历史
             add_anim(w_cur, self.POS_CUR, self.OP_CUR)  # 前进
             add_anim(w_nxt, self.POS_NXT, self.OP_NXT)  # 前进

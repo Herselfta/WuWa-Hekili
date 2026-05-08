@@ -126,8 +126,8 @@ class HekiliApp:
             self.director.reset()
             self.refresh_ui(is_advance=False)
             if len(self.overlay.widgets) > 1:
-                self.overlay.widgets[1].setStyleSheet(
-                    "ActionWidget { border: 4px solid #00FF00; background-color: rgba(0, 0, 0, 180); border-radius: 8px; }")
+                # 移除突兀的绿框，改用统一的当前技能高亮
+                self.overlay.widgets[1].update_style(is_current=True)
             return
 
         # 如果脚本还没启动，忽略其他普通的战斗按键

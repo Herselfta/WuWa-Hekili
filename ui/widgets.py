@@ -12,6 +12,8 @@ class ActionWidget(QFrame):
         super().__init__(parent)
         # 1. 实际的背景与边框容器
         self.bg_frame = QFrame(self)
+        self.bg_frame.setObjectName("bg_frame")
+        self.bg_frame.setFrameShape(QFrame.Shape.NoFrame) 
         
         # 为透明度动画做准备 (对准主容器)
         self.op_effect = QGraphicsOpacityEffect(self)
@@ -22,6 +24,8 @@ class ActionWidget(QFrame):
         self.heavy_border = "#FF4500"
         self.current_border = "#FFD700"
         self.current_variant = None
+        self._last_font_size = 12 # 缓存字体大小以供样式刷新
+        self._current_text_color = "#cab286" # 缓存文本颜色防止被 resizeEvent 覆盖
 
         # 2. 单一的主文字标签 (放入 bg_frame)
         self.text_label = QLabel(self.bg_frame)
@@ -55,9 +59,8 @@ class ActionWidget(QFrame):
         super().resizeEvent(event)
         w, h = self.width(), self.height()
         
-        # 💡 固定偏移量：为了实现标识“出界”对齐，同时不缩小按键本身
-        # 我们在 overlay_window.py 里将容器扩大了 20px，这里缩进 10px 即可还原原大小
-        offset = 10
+        # 💡 固定偏移量：进一步增大偏移（20px），确保即便在放大状态下，标识也不会被父容器裁剪
+        offset = 20
         self.bg_frame.setGeometry(offset, offset, w - offset * 2, h - offset * 2)
         
         # 角色标签大小 (保持正方形)
@@ -65,15 +68,17 @@ class ActionWidget(QFrame):
         char_w = char_h 
         
         # 文字标签覆盖全屏居中 (相对于 bg_frame)
-        self.text_label.setGeometry(0, 0, self.bg_frame.width(), self.bg_frame.height())
+        # 向上微调 2-3 像素以实现视觉上的绝对居中
+        self.text_label.setGeometry(0, -2, self.bg_frame.width(), self.bg_frame.height())
         
         # 动态调整字体大小 (大约为高度的 45%)
-        font_size = max(12, int(self.bg_frame.height() * 0.48))
+        self._last_font_size = max(12, int(self.bg_frame.height() * 0.48))
+        # 必须带上 color，否则会被 resizeEvent 的样式覆盖导致文字变黑/透明
         self.text_label.setStyleSheet(f"""
-            color: #00FF00; 
+            color: {self._current_text_color};
             font-family: 'Segoe UI', 'Microsoft YaHei';
             font-weight: bold;
-            font-size: {font_size}px;
+            font-size: {self._last_font_size}px;
             background: transparent;
         """)
         
@@ -102,14 +107,32 @@ class ActionWidget(QFrame):
             border_color = self.heavy_border
 
         border_width = 3 if is_current else 1
+        # 1. 更新背景框样式
         self.bg_frame.setStyleSheet(f"""
-            QFrame {{
+            #bg_frame {{
                 background-color: rgba(0, 0, 0, 180);
                 border: {border_width}px solid {border_color};
-                border-radius: 12px;
+                border-radius: 14px;
+                margin: 0px;
+                padding: 0px;
             }}
         """)
-        # 确保容器本身不显示背景，只显示内部的 bg_frame
+        
+        # 2. 更新文字颜色：当前按键跟随边框色，其余使用 #cab286
+        self._current_text_color = border_color if is_current else "#cab286"
+        # 如果是特殊变体（如重击），即使不是当前按键，也可能需要特殊颜色
+        if variant and "heavy" in variant.lower():
+            self._current_text_color = self.heavy_border
+
+        self.text_label.setStyleSheet(f"""
+            color: {self._current_text_color};
+            font-family: 'Segoe UI', 'Microsoft YaHei';
+            font-weight: bold;
+            font-size: {self._last_font_size}px;
+            background: transparent;
+        """)
+
+        # 确保容器本身不显示背景
         self.setStyleSheet("background: transparent; border: none;")
 
     def set_data(self, data):
