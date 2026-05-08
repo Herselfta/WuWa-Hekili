@@ -49,21 +49,22 @@ class Director:
             if i == -1:
                 if not self.history_stack:
                     result.append({"type": "none", "desc": "START", "is_history": True, "char_name": ""})
-                    continue
                 else:
                     # 从栈顶取上一个真实的状态
                     h_idx, h_opener, h_char = self.history_stack[-1]
                     prev_action = (self.opener if h_opener else self.loop)[h_idx]
-
+                    
+                    # 处理历史记录预览中的角色名：如果是切人，显示切后的角色；否则显示当时角色
+                    display_char = prev_action.get("next_char") if prev_action["type"] == "intro" else h_char
                     result.append({
                         "type": prev_action["type"],
                         "next_char": prev_action.get("next_char"),
                         "desc": prev_action.get("desc", ""),
                         "is_current": False,
                         "is_history": True,
-                        "char_name": str(h_char)
+                        "char_name": self.team.get(display_char, str(display_char))
                     })
-                    continue
+                continue
 
             # 处理当前和未来预览
             idx = idx % total_steps
@@ -82,7 +83,7 @@ class Director:
                 "next_char": action.get("next_char"),
                 "desc": action.get("desc", ""),
                 "variant": action.get("variant"),
-                "char_name": str(display_char_idx),
+                "char_name": self.team.get(display_char_idx, str(display_char_idx)),
                 "is_current": (i == 0),
                 "is_history": False
             })

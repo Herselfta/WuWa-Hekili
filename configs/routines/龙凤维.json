@@ -1,17 +1,17 @@
 {
-    "name": "lfw",
+    "name": "龙凤维",
     "team_config": {
-        "1": "Aemeath",
-        "2": "Cantarella",
-        "3": "Lynae"
+        "1": "今",
+        "2": "维",
+        "3": "离"
     },
     "team_aliases": {
-        "1": "今汐",
-        "2": "维里奈",
-        "3": "长离"
+        "1": "今",
+        "2": "维",
+        "3": "离"
     },
-    "original_opener": "今汐e\n维里奈aerq\n长离e\n维里奈跳a\n今汐eq\n长离ae\n今汐aae\n长离aq\n今汐ae\n长离aaaz\n维里奈e\n长离rz",
-    "original_loop": "今汐eqr\n长离e\n今汐aae\n长离a\n今汐ae\n长离a\n维里奈aeqr跳a\n今汐e\n长离e\n今汐aae\n长离aq\n今汐ae\n长离az\n维里奈e\n长离rz\n今汐eqr",
+    "original_opener": "今e\n维aerq\n离e\n维跳a\n今eq\n离ae\n今aae\n离aq\n今ae\n离aaaz\n维e\n离rz",
+    "original_loop": "今eqr\n离e\n今aae\n离a\n今ae\n离a\n维aeqr跳a\n今e\n离e\n今aae\n离aq\n今ae\n离az\n维e\n离rz\n今eqr",
     "opener_script": [
         {
             "type": "skill",
@@ -20,7 +20,7 @@
         {
             "type": "intro",
             "next_char": 2,
-            "desc": "切-Cantarella"
+            "desc": "切-维"
         },
         {
             "type": "basic",
@@ -41,7 +41,7 @@
         {
             "type": "intro",
             "next_char": 3,
-            "desc": "切-Lynae"
+            "desc": "切-离"
         },
         {
             "type": "skill",
@@ -50,7 +50,7 @@
         {
             "type": "intro",
             "next_char": 2,
-            "desc": "切-Cantarella"
+            "desc": "切-维"
         },
         {
             "type": "jump",
@@ -63,7 +63,7 @@
         {
             "type": "intro",
             "next_char": 1,
-            "desc": "切-Aemeath"
+            "desc": "切-今"
         },
         {
             "type": "skill",
@@ -76,7 +76,7 @@
         {
             "type": "intro",
             "next_char": 3,
-            "desc": "切-Lynae"
+            "desc": "切-离"
         },
         {
             "type": "basic",
@@ -89,7 +89,7 @@
         {
             "type": "intro",
             "next_char": 1,
-            "desc": "切-Aemeath"
+            "desc": "切-今"
         },
         {
             "type": "basic",
@@ -106,7 +106,7 @@
         {
             "type": "intro",
             "next_char": 3,
-            "desc": "切-Lynae"
+            "desc": "切-离"
         },
         {
             "type": "basic",
@@ -119,7 +119,7 @@
         {
             "type": "intro",
             "next_char": 1,
-            "desc": "切-Aemeath"
+            "desc": "切-今"
         },
         {
             "type": "basic",
@@ -132,7 +132,7 @@
         {
             "type": "intro",
             "next_char": 3,
-            "desc": "切-Lynae"
+            "desc": "切-离"
         },
         {
             "type": "basic",
@@ -154,7 +154,7 @@
         {
             "type": "intro",
             "next_char": 2,
-            "desc": "切-Cantarella"
+            "desc": "切-维"
         },
         {
             "type": "skill",
@@ -163,7 +163,7 @@
         {
             "type": "intro",
             "next_char": 3,
-            "desc": "切-Lynae"
+            "desc": "切-离"
         },
         {
             "type": "ult",
@@ -191,7 +191,7 @@
         {
             "type": "intro",
             "next_char": 3,
-            "desc": "切-Lynae"
+            "desc": "切-离"
         },
         {
             "type": "skill",
@@ -200,7 +200,7 @@
         {
             "type": "intro",
             "next_char": 1,
-            "desc": "切-Aemeath"
+            "desc": "切-今"
         },
         {
             "type": "basic",
@@ -217,7 +217,7 @@
         {
             "type": "intro",
             "next_char": 3,
-            "desc": "切-Lynae"
+            "desc": "切-离"
         },
         {
             "type": "basic",
@@ -226,7 +226,7 @@
         {
             "type": "intro",
             "next_char": 1,
-            "desc": "切-Aemeath"
+            "desc": "切-今"
         },
         {
             "type": "basic",
@@ -239,7 +239,7 @@
         {
             "type": "intro",
             "next_char": 3,
-            "desc": "切-Lynae"
+            "desc": "切-离"
         },
         {
             "type": "basic",
@@ -248,7 +248,7 @@
         {
             "type": "intro",
             "next_char": 2,
-            "desc": "切-Cantarella"
+            "desc": "切-维"
         },
         {
             "type": "basic",
@@ -277,7 +277,7 @@
         {
             "type": "intro",
             "next_char": 1,
-            "desc": "切-Aemeath"
+            "desc": "切-今"
         },
         {
             "type": "skill",
@@ -286,7 +286,7 @@
         {
             "type": "intro",
             "next_char": 3,
-            "desc": "切-Lynae"
+            "desc": "切-离"
         },
         {
             "type": "skill",
@@ -295,7 +295,7 @@
         {
             "type": "intro",
             "next_char": 1,
-            "desc": "切-Aemeath"
+            "desc": "切-今"
         },
         {
             "type": "basic",
@@ -312,7 +312,7 @@
         {
             "type": "intro",
             "next_char": 3,
-            "desc": "切-Lynae"
+            "desc": "切-离"
         },
         {
             "type": "basic",
@@ -325,7 +325,7 @@
         {
             "type": "intro",
             "next_char": 1,
-            "desc": "切-Aemeath"
+            "desc": "切-今"
         },
         {
             "type": "basic",
@@ -338,7 +338,7 @@
         {
             "type": "intro",
             "next_char": 3,
-            "desc": "切-Lynae"
+            "desc": "切-离"
         },
         {
             "type": "basic",
@@ -352,7 +352,7 @@
         {
             "type": "intro",
             "next_char": 2,
-            "desc": "切-Cantarella"
+            "desc": "切-维"
         },
         {
             "type": "skill",
@@ -361,7 +361,7 @@
         {
             "type": "intro",
             "next_char": 3,
-            "desc": "切-Lynae"
+            "desc": "切-离"
         },
         {
             "type": "ult",
@@ -375,7 +375,7 @@
         {
             "type": "intro",
             "next_char": 1,
-            "desc": "切-Aemeath"
+            "desc": "切-今"
         },
         {
             "type": "skill",

@@ -65,13 +65,14 @@ class ActionWidget(QFrame):
         """)
         
         # 角色标签放在左上角
-        char_size = max(14, int(h * 0.25))
-        self.char_label.setGeometry(2, 2, char_size, char_size)
+        char_h = max(14, int(h * 0.25))
+        char_w = int(char_h * 1.2) # 稍微宽一点
+        self.char_label.setGeometry(2, 2, char_w, char_h)
         self.char_label.setStyleSheet(f"""
             background-color: rgba(0, 150, 255, 200); 
             color: white; 
             font-weight: bold; 
-            font-size: {max(9, int(char_size * 0.7))}px;
+            font-size: {max(9, int(char_h * 0.7))}px;
             border-radius: 4px;
         """)
         

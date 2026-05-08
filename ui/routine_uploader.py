@@ -38,20 +38,14 @@ class RoutineUploaderWindow(QWidget):
         self.input_page = QWidget()
         layout = QVBoxLayout(self.input_page)
 
-        char_group = QGroupBox("1. 队伍配置 (1/2/3 号位)")
+        char_group = QGroupBox("1. 队伍配置 (输入代称，如: 忌, 莫, 散)")
         char_layout = QFormLayout(char_group)
-        self.available_chars = self._scan_characters()
         self.char_inputs = []
         for i in range(3):
-            row = QHBoxLayout()
-            combo = QComboBox();
-            combo.addItems(self.available_chars)
-            alias = QLineEdit();
-            alias.setPlaceholderText("代称 (如: 忌, 莫)")
-            row.addWidget(combo, stretch=2);
-            row.addWidget(alias, stretch=1)
-            self.char_inputs.append((combo, alias))
-            char_layout.addRow(f"{i + 1} 号位:", row)
+            alias = QLineEdit()
+            alias.setPlaceholderText(f"{i + 1} 号位代称 (可输入多个，用逗号分隔)")
+            self.char_inputs.append(alias)
+            char_layout.addRow(f"{i + 1} 号位:", alias)
         layout.addWidget(char_group)
 
         text_group = QGroupBox("2. 连招脚本 (黑话/简写)")
@@ -67,11 +61,11 @@ class RoutineUploaderWindow(QWidget):
         text_layout.addWidget(self.loop_edit)
         layout.addWidget(text_group)
 
-        self.progress_bar = QProgressBar();
+        self.progress_bar = QProgressBar()
         self.progress_bar.hide()
         layout.addWidget(self.progress_bar)
 
-        self.btn_parse = QPushButton("✨ 解析并预览图标")
+        self.btn_parse = QPushButton("✨ 解析并预览连招")
         self.btn_parse.setMinimumHeight(45)
         self.btn_parse.setStyleSheet("background-color: #2196F3; color: white; font-weight: bold; border-radius: 5px;")
         self.btn_parse.clicked.connect(self.start_parsing_animation)
@@ -101,23 +95,11 @@ class RoutineUploaderWindow(QWidget):
         self.btn_save.setStyleSheet("background-color: #4CAF50; color: white; font-weight: bold; height: 35px;")
         self.btn_save.clicked.connect(self.save_routine)
 
-        btn_layout.addWidget(self.btn_back);
-        btn_layout.addStretch();
+        btn_layout.addWidget(self.btn_back)
+        btn_layout.addStretch()
         btn_layout.addWidget(self.btn_save)
         layout.addLayout(btn_layout)
         self.stacked_widget.addWidget(self.preview_page)
-
-    def _scan_characters(self):
-        if getattr(sys, 'frozen', False):
-            root_dir = os.path.dirname(sys.executable)
-        else:
-            root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        assets_path = os.path.join(base_dir, "assets", "assets")
-        if not os.path.exists(assets_path): return ["Unknown"]
-        chars = sorted(
-            [d for d in os.listdir(assets_path) if os.path.isdir(os.path.join(assets_path, d)) and d != "AAA_general"])
-        return chars
 
     def load_existing_routine(self, json_path):
         """编辑模式：回填数据"""
@@ -127,13 +109,9 @@ class RoutineUploaderWindow(QWidget):
             self.is_edit_mode = True
             self.current_editing_filename = os.path.basename(json_path)
 
-            team_cfg = data.get("team_config", {})
             team_aliases = data.get("team_aliases", {})
             for i in range(3):
-                name = team_cfg.get(str(i + 1))
-                idx = self.char_inputs[i][0].findText(name)
-                if idx >= 0: self.char_inputs[i][0].setCurrentIndex(idx)
-                self.char_inputs[i][1].setText(team_aliases.get(str(i + 1), ""))
+                self.char_inputs[i].setText(team_aliases.get(str(i + 1), ""))
 
             self.opener_edit.setPlainText(data.get("original_opener", ""))
             self.loop_edit.setPlainText(data.get("original_loop", ""))
@@ -151,10 +129,18 @@ class RoutineUploaderWindow(QWidget):
 
         # 准备映射数据
         self.temp_team_mapping = {}
-        for i, (combo, alias_input) in enumerate(self.char_inputs):
-            name = combo.currentText()
-            aliases = [x.strip() for x in alias_input.text().replace("，", ",").split(",") if x.strip()]
-            self.temp_team_mapping[name] = (i + 1, name, aliases)
+        for i, alias_input in enumerate(self.char_inputs):
+            alias_text = alias_input.text().strip()
+            if not alias_text:
+                continue
+            
+            # 使用第一个代称作为主要显示名称
+            aliases = [x.strip() for x in alias_text.replace("，", ",").split(",") if x.strip()]
+            if not aliases:
+                continue
+            
+            main_name = aliases[0]
+            self.temp_team_mapping[main_name] = (i + 1, main_name, aliases)
 
         self.timer = QTimer()
         self.timer.timeout.connect(self._update_anim)
