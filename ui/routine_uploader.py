@@ -82,6 +82,7 @@ class RoutineUploaderWindow(QWidget):
         # 可滚动的区域显示图标列表
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setStyleSheet("QScrollArea { border: none; background: transparent; }")
         self.scroll_content = QWidget()
         self.scroll_list_layout = QVBoxLayout(self.scroll_content)
         self.scroll_area.setWidget(self.scroll_content)

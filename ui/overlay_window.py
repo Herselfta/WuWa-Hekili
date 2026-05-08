@@ -1,6 +1,10 @@
 from PySide6.QtWidgets import QMainWindow, QWidget, QMenu, QApplication
 from PySide6.QtCore import Qt, QPoint, Signal, QPropertyAnimation, QParallelAnimationGroup, QEasingCurve, QRect
 from PySide6.QtGui import QAction
+import sys
+if sys.platform == "win32":
+    import ctypes
+    from ctypes import wintypes
 
 from ui.widgets import ActionWidget
 from utils.config_manager import config
@@ -13,8 +17,17 @@ class HekiliOverlay(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("WuWa Hekili Overlay")
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Tool)
+        self.setWindowFlags(
+            Qt.WindowType.FramelessWindowHint | 
+            Qt.WindowType.WindowStaysOnTopHint | 
+            Qt.WindowType.Tool |
+            Qt.WindowType.NoDropShadowWindowHint |
+            Qt.WindowType.CustomizeWindowHint
+        )
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.setAttribute(Qt.WidgetAttribute.WA_NoSystemBackground)
+        self.setStyleSheet("background: transparent; border: none;")
+        self.setWindowOpacity(0.999) # 针对 Win11 的玄学优化，略微透明可以避开某些 DWM 边框强制渲染
 
         old_x = config.get("settings.window_x", 100)
         old_y = config.get("settings.window_y", 100)
@@ -26,6 +39,7 @@ class HekiliOverlay(QMainWindow):
         self.customContextMenuRequested.connect(self.show_context_menu)
 
         self.central_widget = QWidget()
+        self.central_widget.setStyleSheet("background: transparent; border: none;")
         self.setCentralWidget(self.central_widget)
 
         # 💡 核心动画参数定义：5个槽位的位置和透明度
@@ -164,6 +178,40 @@ class HekiliOverlay(QMainWindow):
 
         menu.setStyleSheet("QMenu { background-color: white; border: 1px solid gray; }")
         menu.exec(self.mapToGlobal(pos))
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        # 确保在窗口显示后再次尝试应用 Windows 11 的去边框和去阴影设置
+        if sys.platform == "win32":
+            try:
+                hwnd = self.winId()
+                dwmapi = ctypes.WinDLL("dwmapi")
+                
+                # 1. 禁用非客户区渲染 (彻底关掉标题栏/边框/阴影逻辑)
+                policy = ctypes.c_int(1) # DWMNRP_DISABLED
+                dwmapi.DwmSetWindowAttribute(hwnd, 2, ctypes.byref(policy), ctypes.sizeof(policy))
+                
+                # 2. 禁用圆角
+                corner = ctypes.c_int(1) # DWMWCP_DONOTROUND
+                dwmapi.DwmSetWindowAttribute(hwnd, 33, ctypes.byref(corner), ctypes.sizeof(corner))
+                
+                # 3. 禁用窗口过渡动画
+                disable_anim = ctypes.c_int(1)
+                dwmapi.DwmSetWindowAttribute(hwnd, 3, ctypes.byref(disable_anim), ctypes.sizeof(disable_anim))
+
+                # 4. 强制设置边框颜色为透明
+                border_color = ctypes.c_int(0xFFFFFFFE)
+                dwmapi.DwmSetWindowAttribute(hwnd, 34, ctypes.byref(border_color), ctypes.sizeof(border_color))
+
+                # 5. 消除阴影的关键：将非客户区边距设为 0
+                class MARGINS(ctypes.Structure):
+                    _fields_ = [("cxLeftWidth", ctypes.c_int), ("cxRightWidth", ctypes.c_int), 
+                                ("cyTopHeight", ctypes.c_int), ("cyBottomHeight", ctypes.c_int)]
+                margins = MARGINS(0, 0, 0, 0)
+                dwmapi.DwmExtendFrameIntoClientArea(hwnd, ctypes.byref(margins))
+                
+            except Exception as e:
+                pass
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
