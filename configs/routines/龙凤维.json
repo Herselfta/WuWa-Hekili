@@ -10,8 +10,8 @@
         "2": "维",
         "3": "离"
     },
-    "original_opener": "今e\n维aerq\n离e\n维跳a\n今eq\n离ae\n今aae\n离aq\n今ae\n离aaaz\n维e\n离rz",
-    "original_loop": "今eqr\n离e\n今aae\n离a\n今ae\n离a\n维aeqr跳a\n今e\n离e\n今aae\n离aq\n今ae\n离az\n维e\n离rz\n今eqr",
+    "original_opener": "今e\n维aerq\n离e\n维a\n今eq\n离ae\n今aae\n离aq\n今ae\n离aaaz\n维e\n离rz",
+    "original_loop": "今eqr\n离e\n今aae\n离a\n今ae\n离a\n维aeqr跳a\n今e\n离e\n今aae\n离aq\n今ae\n离az\n维e\n离rz",
     "opener_script": [
         {
             "type": "skill",
@@ -51,10 +51,6 @@
             "type": "intro",
             "next_char": 2,
             "desc": "切-维"
-        },
-        {
-            "type": "jump",
-            "desc": "跳跃"
         },
         {
             "type": "basic",
@@ -177,6 +173,11 @@
     ],
     "loop_script": [
         {
+            "type": "intro",
+            "next_char": 1,
+            "desc": "切-今"
+        },
+        {
             "type": "skill",
             "desc": "技能"
         },
@@ -371,23 +372,6 @@
             "type": "heavy",
             "desc": "重击",
             "variant": "heavy"
-        },
-        {
-            "type": "intro",
-            "next_char": 1,
-            "desc": "切-今"
-        },
-        {
-            "type": "skill",
-            "desc": "技能"
-        },
-        {
-            "type": "echo",
-            "desc": "声骸"
-        },
-        {
-            "type": "ult",
-            "desc": "解放"
         }
     ],
     "initial_char_index": 1

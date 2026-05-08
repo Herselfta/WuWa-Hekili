@@ -7,6 +7,7 @@ from utils.logger import log
 class GenericScriptParser:
     def __init__(self, team_mapping):
         self.team_mapping = team_mapping
+        self.current_char_id = 1  # 💡 状态持久化：记录当前解析到的角色 ID
 
         # 角色名称简称映射
         self.char_lookup = {}
@@ -43,10 +44,12 @@ class GenericScriptParser:
         ]
         self.pattern = re.compile("|".join(parts), re.IGNORECASE)
 
-    def parse(self, text, start_char_id=1):
+    def parse(self, text, reset_state=False):
+        if reset_state:
+            self.current_char_id = 1
+            
         tokens = self.pattern.findall(text)
         result = []
-        current_char_id = start_char_id
 
         sorted_char_keys = sorted(list(self.char_lookup.keys()), key=len, reverse=True)
 
@@ -59,13 +62,14 @@ class GenericScriptParser:
             for char_key in sorted_char_keys:
                 if char_key in t:
                     cid, en_name, full_zh_name = self.char_lookup[char_key]
-                    if cid != current_char_id:
+                    if cid != self.current_char_id:
                         prefix = "变奏" if "变奏" in t else "切"
                         result.append({"type": "intro", "next_char": cid, "desc": f"{prefix}-{full_zh_name}"})
-                        current_char_id = cid
+                        self.current_char_id = cid
                     is_char_switch = True
                     break
             if is_char_switch: continue
+
 
             # 2. 动作解析逻辑 [Action][Number]
             match = re.match(rf'^([^\d]+)(\d*)$', t)

@@ -38,45 +38,49 @@ class Director:
         current_script = self.get_current_script()
         if not current_script: return []
 
-        total_steps = len(current_script)
-        # 这里的预览逻辑需要非常严谨地模拟角色切换
-        virtual_char_idx = self.current_char_idx
+        # 1. 处理历史记录预览 (对应 index -1)
+        if not self.history_stack:
+            result.append({"type": "none", "desc": "START", "is_history": True, "char_name": ""})
+        else:
+            # 从栈顶取上一个真实的状态
+            h_idx, h_opener, h_char = self.history_stack[-1]
+            prev_action = (self.opener if h_opener else self.loop)[h_idx]
+            
+            # 处理历史记录预览中的角色名：如果是切人，显示切后的角色；否则显示当时角色
+            display_char = prev_action.get("next_char") if prev_action["type"] == "intro" else h_char
+            result.append({
+                "type": prev_action["type"],
+                "next_char": prev_action.get("next_char"),
+                "desc": prev_action.get("desc", ""),
+                "is_current": False,
+                "is_history": True,
+                "char_name": self.team.get(display_char, str(display_char))
+            })
 
-        for i in range(-1, preview_count):
-            idx = (self.step_index + i)
+        # 2. 处理当前和未来预览
+        # 💡 核心修复：真实模拟剧本推进（包括从 opener 过渡到 loop），而不是简单取余
+        sim_idx = self.step_index
+        sim_opener = self.is_in_opener
+        sim_char = self.current_char_idx
 
-            # 处理历史记录预览
-            if i == -1:
-                if not self.history_stack:
-                    result.append({"type": "none", "desc": "START", "is_history": True, "char_name": ""})
-                else:
-                    # 从栈顶取上一个真实的状态
-                    h_idx, h_opener, h_char = self.history_stack[-1]
-                    prev_action = (self.opener if h_opener else self.loop)[h_idx]
-                    
-                    # 处理历史记录预览中的角色名：如果是切人，显示切后的角色；否则显示当时角色
-                    display_char = prev_action.get("next_char") if prev_action["type"] == "intro" else h_char
-                    result.append({
-                        "type": prev_action["type"],
-                        "next_char": prev_action.get("next_char"),
-                        "desc": prev_action.get("desc", ""),
-                        "is_current": False,
-                        "is_history": True,
-                        "char_name": self.team.get(display_char, str(display_char))
-                    })
-                continue
+        for i in range(preview_count):
+            active_script = self.opener if sim_opener else self.loop
+            if not active_script:
+                break
+            
+            # 安全保护
+            if sim_idx >= len(active_script):
+                sim_idx = 0
 
-            # 处理当前和未来预览
-            idx = idx % total_steps
-            action = current_script[idx]
+            action = active_script[sim_idx]
 
             # 💡 关键：预测未来的角色变化
-            display_char_idx = virtual_char_idx
+            display_char_idx = sim_char
             if action["type"] == "intro":
                 next_c = action.get("next_char")
                 if next_c:
                     display_char_idx = next_c
-                    if i >= 0: virtual_char_idx = next_c  # 更新后续步骤的预测基准
+                    sim_char = next_c  # 更新后续步骤的预测基准
 
             result.append({
                 "type": action["type"],
@@ -87,6 +91,14 @@ class Director:
                 "is_current": (i == 0),
                 "is_history": False
             })
+
+            # 模拟推进 (逻辑与 advance 完全一致)
+            sim_idx += 1
+            if sim_opener and sim_idx >= len(self.opener):
+                sim_opener = False  # 启动轴结束，进入循环轴
+                sim_idx = 0
+            elif not sim_opener and sim_idx >= len(self.loop):
+                sim_idx = 0  # 循环轴结束，从头开始循环
         return result
 
     def input_received(self, input_action, is_down):
