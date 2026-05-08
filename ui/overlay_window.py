@@ -48,23 +48,24 @@ class HekiliOverlay(QMainWindow):
         self.exiting_widget = None
 
         # [位置-1] 历史动作 (左侧)
-        self.POS_HIS = QRect(46, 36, 48, 48)   # X=46
+        # 扩展容器大小以允许标识“出界”对齐
+        self.POS_HIS = QRect(36, 26, 68, 68)   # 原 46, 36, 48, 48
         self.OP_HIS = 0.4
         
-        # [位置1] 当前技能 (整体序列的视觉重心之一)
-        self.POS_CUR = QRect(126, 20, 80, 80)  # X=126
+        # [位置1] 当前技能 (核心)
+        self.POS_CUR = QRect(116, 10, 100, 100) # 原 126, 20, 80, 80
         self.OP_CUR = 1.0
         
         # [位置2] 下一个技能
-        self.POS_NXT = QRect(226, 28, 64, 64)  # X=226
+        self.POS_NXT = QRect(216, 18, 84, 84)  # 原 226, 28, 64, 64
         self.OP_NXT = 0.8
         
-        # [位置3] 未来技能 (最右侧可见)
-        self.POS_FUT = QRect(306, 36, 48, 48)  # X=306
+        # [位置3] 未来技能
+        self.POS_FUT = QRect(296, 26, 68, 68)  # 原 306, 36, 48, 48
         self.OP_FUT = 0.6
         
-        # [位置4] 备用进场位置 (右侧边缘外)
-        self.POS_IN = QRect(376, 44, 32, 32)   # X=376
+        # [位置4] 进场位置 (右侧边缘外)
+        self.POS_IN = QRect(366, 34, 52, 52)   # 原 376, 44, 32, 32
         self.OP_IN = 0.0
 
     def update_ui(self, visual_data, is_advance=False, is_rollback=False):
@@ -142,7 +143,7 @@ class HekiliOverlay(QMainWindow):
                 self.anim_group.addAnimation(anim_op)
 
             # 分配动画目标
-            add_anim(w_his, QRect(-30, 44, 32, 32), 0.0)  # 历史往左侧边缘消失
+            add_anim(w_his, QRect(-40, 34, 52, 52), 0.0)  # 历史往左侧边缘消失
             add_anim(w_out, self.POS_HIS, self.OP_HIS)  # 当前变历史
             add_anim(w_cur, self.POS_CUR, self.OP_CUR)  # 前进
             add_anim(w_nxt, self.POS_NXT, self.OP_NXT)  # 前进

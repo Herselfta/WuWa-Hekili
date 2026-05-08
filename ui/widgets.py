@@ -10,8 +10,10 @@ from utils.config_manager import config
 class ActionWidget(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent)
-
-        # 为透明度动画做准备
+        # 1. 实际的背景与边框容器
+        self.bg_frame = QFrame(self)
+        
+        # 为透明度动画做准备 (对准主容器)
         self.op_effect = QGraphicsOpacityEffect(self)
         self.setGraphicsEffect(self.op_effect)
         self.op_effect.setOpacity(1.0)
@@ -21,22 +23,12 @@ class ActionWidget(QFrame):
         self.current_border = "#FFD700"
         self.current_variant = None
 
-        # 单一的主文字标签
-        self.text_label = QLabel(self)
+        # 2. 单一的主文字标签 (放入 bg_frame)
+        self.text_label = QLabel(self.bg_frame)
         self.text_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        # 角色标识标签 (1, 2, 3)
-        self.char_label = QLabel(self)
-        self.char_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.char_label.setStyleSheet("""
-            background-color: rgba(0, 150, 255, 200); 
-            color: white; 
-            font-weight: bold; 
-            font-size: 12px;
-            border-radius: 4px;
-        """)
-
-        self.status_label = QLabel(self)
+        # 3. 状态标签 (放入 bg_frame)
+        self.status_label = QLabel(self.bg_frame)
         self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.status_label.setStyleSheet("""
             background-color: rgba(255, 0, 0, 180); 
@@ -47,15 +39,36 @@ class ActionWidget(QFrame):
         """)
         self.status_label.hide()
 
+        # 4. 角色标识标签 (悬浮在 bg_frame 之上)
+        self.char_label = QLabel(self)
+        self.char_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.char_label.setStyleSheet("""
+            background-color: rgba(255, 255, 255, 235); 
+            color: #2D2D2D; 
+            font-weight: 900; 
+            font-size: 12px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 0, 0, 30);
+        """)
+
     def resizeEvent(self, event):
         super().resizeEvent(event)
         w, h = self.width(), self.height()
         
-        # 文字标签覆盖全屏居中
-        self.text_label.setGeometry(self.rect())
+        # 💡 固定偏移量：为了实现标识“出界”对齐，同时不缩小按键本身
+        # 我们在 overlay_window.py 里将容器扩大了 20px，这里缩进 10px 即可还原原大小
+        offset = 10
+        self.bg_frame.setGeometry(offset, offset, w - offset * 2, h - offset * 2)
         
-        # 动态调整字体大小 (大约为高度的40%)
-        font_size = max(10, int(h * 0.4))
+        # 角色标签大小 (保持正方形)
+        char_h = max(20, int((w - offset * 2) * 0.35))
+        char_w = char_h 
+        
+        # 文字标签覆盖全屏居中 (相对于 bg_frame)
+        self.text_label.setGeometry(0, 0, self.bg_frame.width(), self.bg_frame.height())
+        
+        # 动态调整字体大小 (大约为高度的 45%)
+        font_size = max(12, int(self.bg_frame.height() * 0.48))
         self.text_label.setStyleSheet(f"""
             color: #00FF00; 
             font-family: 'Segoe UI', 'Microsoft YaHei';
@@ -64,20 +77,23 @@ class ActionWidget(QFrame):
             background: transparent;
         """)
         
-        # 角色标签放在左上角
-        char_h = max(14, int(h * 0.25))
-        char_w = int(char_h * 1.2) # 稍微宽一点
-        self.char_label.setGeometry(2, 2, char_w, char_h)
+        # 💡 核心：将标识的中心点对齐按键图标的左上角 (0, 0)
+        # char_label 的 top-left 位于 (offset - char_w/2, offset - char_h/2)
+        label_x = offset - char_w // 2
+        label_y = offset - char_h // 2
+        self.char_label.setGeometry(label_x, label_y, char_w, char_h)
         self.char_label.setStyleSheet(f"""
-            background-color: rgba(0, 150, 255, 200); 
-            color: white; 
-            font-weight: bold; 
-            font-size: {max(9, int(char_h * 0.7))}px;
-            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 245); 
+            color: #1A1A1A; 
+            font-weight: 900; 
+            font-size: {max(12, int(char_h * 0.7))}px;
+            border-radius: {char_h // 3}px;
+            border: 1px solid rgba(0, 0, 0, 80);
         """)
         
-        # 状态标签（如 HOLD）放在底部
-        self.status_label.setGeometry(2, h - int(h * 0.25) - 2, w - 4, int(h * 0.25))
+        # 状态标签（如 HOLD）放在底部 (相对于 bg_frame)
+        status_h = int(self.bg_frame.height() * 0.25)
+        self.status_label.setGeometry(2, self.bg_frame.height() - status_h - 2, self.bg_frame.width() - 4, status_h)
 
     def update_style(self, variant=None, is_current=False):
         self.current_variant = variant
@@ -86,13 +102,15 @@ class ActionWidget(QFrame):
             border_color = self.heavy_border
 
         border_width = 3 if is_current else 1
-        self.setStyleSheet(f"""
-            ActionWidget {{
+        self.bg_frame.setStyleSheet(f"""
+            QFrame {{
                 background-color: rgba(0, 0, 0, 180);
                 border: {border_width}px solid {border_color};
                 border-radius: 12px;
             }}
         """)
+        # 确保容器本身不显示背景，只显示内部的 bg_frame
+        self.setStyleSheet("background: transparent; border: none;")
 
     def set_data(self, data):
         variant = data.get("variant")
