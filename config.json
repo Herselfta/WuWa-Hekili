@@ -6,30 +6,6 @@
     "window_x": 1444,
     "window_y": 605
   },
-  "assets": {
-    "folder_mapping": {
-      "basic": "normal_attack",
-      "heavy": "heavy",
-      "skill": "resonance_skill",
-      "ult": "resonance_liberation",
-      "execution": "resonance_skill",
-      "jump": "jump",
-      "dodge": "dodge",
-      "echo": "echo",
-      "intro": "character"
-    },
-    "default_filename": {
-      "basic": "normal",
-      "heavy": "heavy",
-      "skill": "normal",
-      "ult": "liberation",
-      "jump": "jump",
-      "dodge": "dodge",
-      "execution": "normal",
-      "intro": "avatar",
-      "echo": "echo"
-    }
-  },
   "keymaps": {
     "keyboard": {
       "start_trigger": "keyboard_x",

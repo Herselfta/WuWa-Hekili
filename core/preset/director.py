@@ -4,7 +4,7 @@ from utils.logger import log
 
 
 class Director:
-    def __init__(self, team_config, opener_script, loop_script, start_char_index, asset_mgr=None):
+    def __init__(self, team_config, opener_script, loop_script, start_char_index):
         self.team = team_config
         self.opener = opener_script
         self.loop = loop_script
